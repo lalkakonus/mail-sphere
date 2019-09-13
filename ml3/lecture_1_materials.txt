@@ -1,0 +1,17 @@
+The elements of statistical learning (Chapters 8, 9, 15)
+
+Pattern Recognition and Machine Learning (Chapter 14)
+
+Random Forest
+
+Bagging Predictors
+
+Random Subspace Method
+
+Decision Forests for Classication, Regression, Density Estimation, Manifold Learning and Semi-Supervised Learning (Chapters 2, 3)
+
+Extremely Randomized Trees
+
+Perfect Random Tree Ensembles
+
+Статья о том как Random Forest всех побеждает
