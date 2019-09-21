@@ -1,19 +1,41 @@
-from sklearn.tree import DecisionTreeRegressor
+from decision_tree_regressor import DecisionTreeRegressor
 import math
+import logging
+from scipy.optimize import minimize
+import numpy as np
+from sklearn.metrics import accuracy_score
 
 class ConstModel:
-    def __inti__(self, target):
+    def fit(self, target: float):
         self.target = target
+        return self
 
-    def predict(self, X):
-        return np.ones(X.shape[0]) * self.target
+    def predict(self, X: np.array) -> np.array:
+        """
+        Predict constnt value for every sample
+
+        Paramert
+        --------
+        X : np.array of shape [n_samples, n_features]
+        """
+        n_samples = X.shape[0]
+        return np.ones(n_samples) * self.target
 
 class GradientBoostingClassifier:
+    # Models
     estimators_array = []
+
+    # Train set predictions
+    predictions_array = None
     
-    def __inti__(self, learning_rate=0.1, n_estimators=100, subsample=1.0, 
-            criterion="friedman_mse", min_samples_split=2, min_samples_leaf=1,
-            max_depth=3, _iter_no_change=None):
+    # Train set accuracy values
+    accuracy_array = []
+
+    variance_array = [] 
+
+    def __init__(self, learning_rate=0.1, n_estimators=100, subsample=1.0, 
+            criterion="mse", min_samples_split=2, min_samples_leaf=1,
+            max_depth=3):
         """
         Initialize gradient boosting classifier with logistic loss function
 
@@ -28,10 +50,6 @@ class GradientBoostingClassifier:
             Loss function to build tree models that approximate antigradient of error function
         max_depth : int > 1
             Depth of tree model is gradually increase from 1 ti max_depth value
-            
-        Return
-        -------
-        object : self
         """
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
@@ -40,9 +58,8 @@ class GradientBoostingClassifier:
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
         self.max_depth = max_depth
-        return self
 
-    def fit(self, X: np.array, y: np.array):
+    def fit(self, X_train: np.array, y_train: np.array, X_test, y_test):
         """
         Train model using given dataset.
 
@@ -55,25 +72,77 @@ class GradientBoostingClassifier:
         ------
         object : self
         """
-        self.initialize_model(X, y)
-        for i in range(self.n_estimators):
-            self.add_estimator(X, y)
+        self.predictions_array = np.empty([self.n_estimators, X_train.shape[0]])
+        
+        self.initialize_model(X_train, y_train)
+        print(self.accuracy_array[-1], np.array(self.accuracy_array[-10:]).var())
+        depth = 1
+        last_increase = 0
+        for i in range(self.n_estimators - 1):
+            if np.array(self.accuracy_array[-10:]).var() < 1e-4 and last_increase + 10 < i:
+                depth += 1
+                last_increase = i
+                print("Increase depth")
+            self.add_estimator(X_train, y_train, depth)
+            print(self.accuracy_array[-1], np.array(self.accuracy_array[-10:]).var())
         return self
 
-    def predict_proba(self, X):
-        result = np.zeros(X.shape[0])
-        for model in self.estimator_array:
-            result += model.predict(X)
-        return result
+    def predict_proba(self, X: np.array) -> np.array:
+        """
+        Predict class probabilities [0, 1] for 1 class in {0, 1} classification
 
-    def predict(self, X):
-        return self.predict_proba.round()
+        Parametrs
+        ---------
+        X : np.array of shape [n_samples, n_features]
+
+        Return
+        --------
+        prediction : np.array of shape [n_samples]
+            Probabilities of 1 class.
+        """
+        n_samples = X.shape[0]
+        result = np.zeros(n_samples)
+        for estimator in self.estimators_array:
+            result += self.learning_rate * estimator.predict(X).reshape(-1)
+        return 1 / (1 + np.exp(-result))
+
+    def predict(self, X: np.array):
+        return self.predict_proba(X).round()
+
+    def score(self, X, y_true):
+        y_pred = self.predict(X)
+        return accuracy_score(y_true, y_pred)
+
+    @property
+    def estimators_cnt(self):
+        return len(self.estimators_array)
+
+    @property
+    def last_prediction(self):
+        margin = self.predictions_array[self.estimators_cnt - 1]
+        return 1 / (1 + np.exp(-margin))
 
     def initialize_model(self, X, y):
-        estimators_array += ConstMode(-math.log((1 / y.mean() - 1)))
+        model = ConstModel().fit(-math.log(1 / y.mean() - 1))
+        self.estimators_array.append(model)
+        self.predictions_array[0] = np.array(model.predict(X)).reshape(-1)
+        self.accuracy_array.append(accuracy_score(y, self.last_prediction.round()))
     
-    def add_estimator(self, X, y, depth=1):
-        shift = 1 / (1 + np.exp(-self.predict_proba(X))) - y
-        model = DecisionTreeRegression(depth=depth)
-        model.fit(X, shift)
+    def add_estimator(self, X, y, depth):
+        target = y - self.last_prediction
+        model = DecisionTreeRegressor(
+            max_depth=depth,
+            min_samples_split=self.min_samples_split,
+            min_samples_leaf=self.min_samples_leaf,
+            subsample=self.subsample).fit(X, target)
         
+        self.predictions_array[self.estimators_cnt - 1] = self.predictions_array[self.estimators_cnt - 2]
+        self.predictions_array[self.estimators_cnt - 1] += self.learning_rate * model.predict(X).reshape(-1)
+       
+        self.accuracy_array.append(accuracy_score(y, self.last_prediction.round()))
+        self.estimators_array.append(model)
+    
+    def print_statistic(self, X_train, y_train, X_test, y_test, iteration):
+        print("Iteration # {:<3}- ".format(iteration) + "train score: " + str(self.score(X_train, y_train)) +
+            " - test score: " + str(self.score(X_test, y_test)))
+

@@ -3,6 +3,7 @@ from sklearn.preprocessing import normalize
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 import abc
+from sklearn.metrics import balanced_accuracy_score
 
 class BaseDecisionTree(metaclass=abc.ABCMeta):
     
@@ -42,7 +43,7 @@ class BaseDecisionTree(metaclass=abc.ABCMeta):
 
 class DecisionTreeRegressor(BaseDecisionTree):
     
-    def __init__(self, criterion="mse", min_samples_split=2, min_samples_leaf=1, max_depth=None):
+    def __init__(self, criterion="mse", min_samples_split=3, min_samples_leaf=3, max_depth=None, subsample=1.0):
         """
         Initialize Decision tree regressor.
 
@@ -62,7 +63,9 @@ class DecisionTreeRegressor(BaseDecisionTree):
         assert type(max_depth) is int and max_depth > 0 or max_depth is None
         assert type(min_samples_split) is int and min_samples_split > 0
         assert type(min_samples_leaf) is int and min_samples_leaf > 0
-       
+        assert type(subsample) is float and subsample <= 1 and subsample >= 0
+
+        self.subsample = subsample
         self.criterion = criterion
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
@@ -87,7 +90,8 @@ class DecisionTreeRegressor(BaseDecisionTree):
         self : object 
         """
         self.n_features = X.shape[1]
-        self.root = self.create_node(X, y, depth=0)
+        idx = np.random.choice(X.shape[0], round(X.shape[0] * self.subsample), replace=False)
+        self.root = self.create_node(X[idx], y[idx], depth=0)
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -152,7 +156,7 @@ class DecisionTreeRegressor(BaseDecisionTree):
         if ((self.max_depth is not None and depth >= self.max_depth) or 
             y.size < max(self.min_samples_leaf * 2, self.min_samples_split * 2)):
             # if split is too small or branch deep enought, create leaf node
-            target_value = y.mean()
+            target_value = 0.5 * y.sum() / (np.abs(y) * (1 - np.abs(y))).sum()
             return BaseDecisionTree.Node(node_type="LEAF", target_value=target_value)
 
         feature_num, threshold = self.find_best_split(X, y)
