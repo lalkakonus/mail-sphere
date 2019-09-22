@@ -43,7 +43,8 @@ class BaseDecisionTree(metaclass=abc.ABCMeta):
 
 class DecisionTreeRegressor(BaseDecisionTree):
     
-    def __init__(self, criterion="mse", min_samples_split=3, min_samples_leaf=3, max_depth=None, subsample=1.0):
+    def __init__(self, criterion="mse", min_samples_split=3, min_samples_leaf=3, max_depth=None, subsample=1.0,
+            max_features=1.0):
         """
         Initialize Decision tree regressor.
 
@@ -70,6 +71,7 @@ class DecisionTreeRegressor(BaseDecisionTree):
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
+        self.max_features = max_features
 
     # TODO transform classes to 0 - N classes
     def fit(self, X: np.ndarray, y: np.ndarray):
@@ -91,7 +93,9 @@ class DecisionTreeRegressor(BaseDecisionTree):
         """
         self.n_features = X.shape[1]
         idx = np.random.choice(X.shape[0], round(X.shape[0] * self.subsample), replace=False)
+        #features = np.random.choice(self.n_features, round(self.n_features * self.max_features), replace=False)
         self.root = self.create_node(X[idx], y[idx], depth=0)
+        #self.root = self.create_node(X, y, depth=0)
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -110,7 +114,7 @@ class DecisionTreeRegressor(BaseDecisionTree):
         """
         return np.array([self.root.predict(sample) for sample in X]).reshape(-1, 1)
 
-    def score(self, X: np.ndarray, y_true: np.ndarray, metrics="r2_score") -> float:
+    def score(self, X: np.ndarray, y_true: np.ndarray, metrics="mse") -> float:
         """
         Mean Squared Error score.
         

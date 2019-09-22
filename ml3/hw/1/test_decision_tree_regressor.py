@@ -5,6 +5,7 @@ from decision_tree_regressor import DecisionTreeRegressor
 from sklearn import datasets
 from dataloader import DataLoader
 from time import time
+from sklearn.metrics import mean_squared_error
 import numpy as np
 
 @pytest.fixture
@@ -19,15 +20,23 @@ def dataset():
     test_dataset = datasets.load_diabetes()
     X = test_dataset.data
     y = test_dataset.target
-    return train_test_split(X, y, test_size=0.33, random_state=42)
+    return train_test_split(X, y, test_size=0.3, random_state=42)
 
 def test_regressor(dataset):
-    X_train, X_test, y_train, y_test = dataset
-    my_regressor = DecisionTreeRegressor(max_depth=1)
+    #X_train, X_test, y_train, y_test = dataset
+    X_train, X_test, y_train, y_test = DataLoader().load()
+    my_regressor = DecisionTreeRegressor(max_depth=4, min_samples_split=2, min_samples_leaf=1)
     my_regressor.fit(X_train, y_train)
-    print(my_regressor.score(X_test, y_test))
+    my_score = my_regressor.score(X_test, y_test)
+    
+    regressor = SklearnDecisionTreeRegressor(max_depth=4, min_samples_split=2, min_samples_leaf=1)
+    regressor.fit(X_train, y_train)
+    sklearn_score = mean_squared_error(y_test, regressor.predict(X_test))
+    
+    print("MY: {}/ Sklearn: {}".format(my_score, sklearn_score))
 
 def test_highload():
+    return 0
     X_train, X_test, y_train, y_test = DataLoader().load()
     
     regressor = SklearnDecisionTreeRegressor(max_depth=20)

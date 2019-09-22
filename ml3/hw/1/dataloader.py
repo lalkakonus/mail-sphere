@@ -11,9 +11,15 @@ def processing(dataset):
 
 class DataLoader():
     
+    def __init__(self, train_fract=0.7, valid_fract=0.1, test_fract=0.2):
+        #assert train_fract + valid_gract + test_gract == 1
+
+        self.train_fract = train_fract
+        self.test_fract = test_fract
+        self.valid_fract = valid_fract
 
     @processing
-    def __load_dataset(self, filepath: str):
+    def __load_dataset(self, filepath: str,):
         """
         Load tsv dataset from filepath
 
@@ -25,6 +31,7 @@ class DataLoader():
         -------
         X, y : np.array of shape [n_samples, n_features] and [n_samples] respectively
         """
+        
         df = pd.read_csv(filepath, sep=" ")
         X, y = df.iloc[:, 1:].to_numpy(), df.iloc[:, 0].to_numpy()
         return X, y

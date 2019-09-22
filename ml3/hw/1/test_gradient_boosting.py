@@ -41,24 +41,56 @@ def test_score(dataset):
     model = SklearnGradientBoostingClassifier(n_estimators=n_estimators)
     X_train, X_test, y_train, y_test = dataset
     model.fit(X_train, y_train)
-    prediction = np.empty([n_estimators, X_test.shape[0]])
-    for i, proba in enumerate(model.staged_predict_proba(X_test)):
+    prediction = np.empty([n_estimators, X_train.shape[0]])
+    for i, proba in enumerate(model.staged_predict_proba(X_train)):
         prediction[i] = proba[:, 1]
-    y = (- y_test * np.log(prediction) - (1 - y_test) * np.log(1 - prediction)).sum(axis=1)
+    y = (- y_train * np.log(prediction) - (1 - y_train) * np.log(1 - prediction)).sum(axis=1)
 
     board = DashBoard()
     board.init_graph(name="baseline", title="sklearn", line_type="baseline", c="g", y=y.reshape(-1))
     board.make_plot()
 
-def test_my_score(dataset):
-    return
-    n_estimators = 100
-    model = GradientBoostingClassifier(n_estimators=n_estimators)
+def loss(y_true, y_pred):
+    return (- y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred)).sum(axis=1)
+
+
+def test_real_data(dataset):
+    #X_train, X_test, y_train, y_test = DataLoader().load()
     X_train, X_test, y_train, y_test = dataset
+    
+    
+    n_estimators = 200
+    model = GradientBoostingClassifier(
+        n_estimators=n_estimators, 
+        max_depth=1, 
+        min_samples_split=20,
+        subsample=0.5,
+        learning_rate=0.1,
+        #max_features=0.8,
+        min_samples_leaf=10)
     model.fit(X_train, y_train)
-    prediction = model.staged_predict_proba(X_train)
-    y = (- y_test * np.log(prediction) - (1 - y_test) * np.log(1 - prediction)).sum(axis=1)
+    prediction = model.staged_predict_proba(X_test)
+    y = loss(y_test, prediction)
 
     board = DashBoard()
     board.init_graph(name="my_one", title="my_one", line_type="default", c="r", y=y.reshape(-1))
+    
+    model = SklearnGradientBoostingClassifier(
+        n_estimators=n_estimators,
+        max_depth=2,
+        criterion="mse",
+        min_samples_split=20,
+        min_samples_leaf=10,
+        subsample=0.5,
+        learning_rate=0.1,
+        #max_features=0.1,
+        init="zero")
+    model.fit(X_train, y_train)
+    prediction = np.empty([n_estimators, X_test.shape[0]])
+    for i, proba in enumerate(model.staged_predict_proba(X_test)):
+        prediction[i] = proba[:, 1]
+    y = loss(y_test, prediction)
+
+    board.init_graph(name="baseline", title="sklearn", line_type="baseline", c="g", y=y.reshape(-1))
     board.make_plot()
+
