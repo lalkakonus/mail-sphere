@@ -1,4 +1,6 @@
+import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 def processing(dataset):
     
@@ -11,8 +13,9 @@ def processing(dataset):
 
 class DataLoader():
     
-    def __init__(self, train_fract=0.7, valid_fract=0.1, test_fract=0.2):
-        #assert train_fract + valid_gract + test_gract == 1
+    def __init__(self, train_fract=0.7, valid_fract=0, test_fract=0.3):
+        
+        assert train_fract + valid_fract + test_fract == 1
 
         self.train_fract = train_fract
         self.test_fract = test_fract
@@ -33,7 +36,7 @@ class DataLoader():
         """
         
         df = pd.read_csv(filepath, sep=" ")
-        X, y = df.iloc[:, 1:].to_numpy(), df.iloc[:, 0].to_numpy()
+        X, y = df.iloc[:, 1:].to_numpy(), df.iloc[:, 0].to_numpy().reshape(-1, 1)
         return X, y
 
     def load(self):
@@ -50,4 +53,23 @@ class DataLoader():
 
         X_train, y_train = self.__load_dataset(train_filepath)
         X_test, y_test = self.__load_dataset(test_filepath)
-        return X_train, X_test, y_train, y_test
+       
+        return X_train, X_test, y_train.reshape(-1), y_test.reshape(-1)
+
+        X = np.vstack((X_train, X_test))
+        y = np.vstack((y_train, y_test))
+        return train_test_split(X, y, test_size=0.8)
+      
+        '''
+        n_samples = X.shape[0]
+        shuffle = np.random.choice(n_samples, n_samples, replace=False)
+        X, y = X[shuffle], y[shuffle]
+   
+        return (
+            X[:round(n_samples * self.train_fract)], 
+            X[round(n_samples * self.train_fract):round(n_samples * (self.train_fract + self.valid_fract))],
+            X[round(n_samples * (self.train_fract + self.valid_fract)):],
+            y[:round(n_samples * self.train_fract)].reshape(-1), 
+            y[round(n_samples * self.train_fract):round(n_samples * (self.train_fract + self.valid_fract))].reshape(-1),
+            y[round(n_samples * (self.train_fract + self.valid_fract)):].reshape(-1))
+        '''

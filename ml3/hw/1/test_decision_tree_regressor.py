@@ -24,28 +24,30 @@ def dataset():
 
 def test_regressor(dataset):
     #X_train, X_test, y_train, y_test = dataset
-    X_train, X_test, y_train, y_test = DataLoader().load()
-    my_regressor = DecisionTreeRegressor(max_depth=4, min_samples_split=2, min_samples_leaf=1)
+    X_train, X_valid, X_test, y_train, y_valid, y_test = DataLoader().load()
+    my_regressor = DecisionTreeRegressor(max_depth=1, min_samples_split=2, min_samples_leaf=1)
     my_regressor.fit(X_train, y_train)
     my_score = my_regressor.score(X_test, y_test)
     
-    regressor = SklearnDecisionTreeRegressor(max_depth=4, min_samples_split=2, min_samples_leaf=1)
+    regressor = SklearnDecisionTreeRegressor(max_depth=1, min_samples_split=2, min_samples_leaf=1)
     regressor.fit(X_train, y_train)
     sklearn_score = mean_squared_error(y_test, regressor.predict(X_test))
-    
-    print("MY: {}/ Sklearn: {}".format(my_score, sklearn_score))
+   
+    print(my_score)
+    print("Sklearn - My: {}".format(sklearn_score - my_score))
 
 def test_highload():
     return 0
     X_train, X_test, y_train, y_test = DataLoader().load()
-    
-    regressor = SklearnDecisionTreeRegressor(max_depth=20)
+   
+    print(X_train[10])
+    regressor = SklearnDecisionTreeRegressor(max_depth=1)
     t0 = time()
     regressor.fit(X_train, y_train)
     print("Sklearn time: {}".format(time() - t0))
     print("Sklearn score: {}".format(regressor.score(X_test, y_test)))
     
-    my_regressor = DecisionTreeRegressor(max_depth=20)
+    my_regressor = DecisionTreeRegressor(max_depth=1)
     t0 = time()
     my_regressor.fit(X_train, y_train)
     print("My time: {}".format(time() - t0))

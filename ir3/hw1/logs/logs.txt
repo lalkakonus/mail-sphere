@@ -1,0 +1,5 @@
+19-10-03 01:27:06 - include.dataprocessor - INFO - Process #0; pid 15192 started
+19-10-03 01:27:06 - include.dataprocessor - INFO - Process #1; pid 15193 started
+19-10-03 01:27:41 - include.dataprocessor - INFO - All data processed
+19-10-03 01:27:41 - include.dataprocessor - INFO - Process (pid - 15192) joined
+19-10-03 01:27:41 - include.dataprocessor - INFO - Process (pid - 15193) joined

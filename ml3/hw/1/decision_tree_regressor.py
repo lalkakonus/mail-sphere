@@ -74,7 +74,7 @@ class DecisionTreeRegressor(BaseDecisionTree):
         self.max_features = max_features
 
     # TODO transform classes to 0 - N classes
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, pr=None):
         """
         Train the model using samples from X with target values y.
         
@@ -94,7 +94,9 @@ class DecisionTreeRegressor(BaseDecisionTree):
         self.n_features = X.shape[1]
         idx = np.random.choice(X.shape[0], round(X.shape[0] * self.subsample), replace=False)
         #features = np.random.choice(self.n_features, round(self.n_features * self.max_features), replace=False)
-        self.root = self.create_node(X[idx], y[idx], depth=0)
+        if pr is not None:
+            pr = pr[idx]
+        self.root = self.create_node(X[idx], y[idx], pr, depth=0)
         #self.root = self.create_node(X, y, depth=0)
         return self
 
@@ -138,7 +140,7 @@ class DecisionTreeRegressor(BaseDecisionTree):
         else:
             return mean_squared_error(y_true, self.predict(X))
 
-    def create_node(self, X: np.ndarray, y: np.ndarray, depth: int) -> BaseDecisionTree.Node:
+    def create_node(self, X: np.ndarray, y: np.ndarray, pr=None, depth=0) -> BaseDecisionTree.Node:
         """
         Find best split parametr e.g. feature and predicate value and create NONLEAF node
         in case it is possible, ether create LEAF node with target value.
@@ -160,14 +162,39 @@ class DecisionTreeRegressor(BaseDecisionTree):
         if ((self.max_depth is not None and depth >= self.max_depth) or 
             y.size < max(self.min_samples_leaf * 2, self.min_samples_split * 2)):
             # if split is too small or branch deep enought, create leaf node
-            target_value = 0.5 * y.sum() / (np.abs(y) * (1 - np.abs(y))).sum()
+            target_value =  0.5 * y.sum() / (np.abs(y) * (1 - np.abs(y))).sum()
+            # target_value = y.mean()
+            #if pr is not None:
+            #    target_value =  y.sum() / (pr * (1 - pr)).sum()
+            #else:
+            #    target_value = y.mean()
+            if abs(target_value) > 1e5:
+                target_value = 0
             return BaseDecisionTree.Node(node_type="LEAF", target_value=target_value)
 
         feature_num, threshold = self.find_best_split(X, y)
         left_idx = np.argwhere(X[:, feature_num] <= threshold).reshape(-1)
         right_idx = np.setdiff1d(np.arange(X.shape[0]), left_idx).reshape(-1)
-        left_node = self.create_node(X[left_idx], y[left_idx], depth + 1)
-        right_node = self.create_node(X[right_idx], y[right_idx], depth + 1)
+        
+        '''
+        if left_idx.size == 0 or right_idx.size == 0:
+            if pr is not None:
+                target_value =  y.sum() / (pr * (1 - pr)).sum()
+            else:
+                target_value = y.mean()
+            if abs(target_value) > 1e5:
+                target_value = 0
+            return BaseDecisionTree.Node(node_type="LEAF", target_value=target_value)
+        '''
+        
+        if pr is not None:
+            pr_l = pr[left_idx]
+            pr_r = pr[right_idx]
+        else:
+            pr_r = None
+            pr_l = None
+        left_node = self.create_node(X[left_idx], y[left_idx], pr_l, depth + 1)
+        right_node = self.create_node(X[right_idx], y[right_idx], pr_r, depth + 1)
         return BaseDecisionTree.Node(feature_num, threshold, left_node, right_node)
 
     # TODO Add parallization by features

@@ -1,7 +1,13 @@
+ir3/hw1/data
+ir3/hw1/docs
+ml3/materials
+ml3/hw/1/data
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
 
 # C extensions
 *.so

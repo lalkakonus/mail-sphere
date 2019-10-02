@@ -34,10 +34,11 @@ def test_classifier(dataset):
     print(classifier.score(X_test, y_test))
     # print(my_classifier.score(X_test, y_test))
 
+'''
 def test_score(dataset):
     # TEST dataset on sklearn
     return
-    n_estimators = 100
+    n_estimators = 300
     model = SklearnGradientBoostingClassifier(n_estimators=n_estimators)
     X_train, X_test, y_train, y_test = dataset
     model.fit(X_train, y_train)
@@ -49,35 +50,40 @@ def test_score(dataset):
     board = DashBoard()
     board.init_graph(name="baseline", title="sklearn", line_type="baseline", c="g", y=y.reshape(-1))
     board.make_plot()
+'''
 
 def loss(y_true, y_pred):
-    return (- y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred)).sum(axis=1)
+    eps = 1e-7
+    return (- y_true * np.log(y_pred + eps) - (1 - y_true) * np.log(1 - y_pred + eps)).sum(axis=1)
 
 
 def test_real_data(dataset):
-    #X_train, X_test, y_train, y_test = DataLoader().load()
-    X_train, X_test, y_train, y_test = dataset
-    
-    
-    n_estimators = 200
+    # X_train, X_valid, X_test, y_train, y_valid, y_test = DataLoader().load()
+    X_train, X_test, y_train, y_test = DataLoader().load()
+    # X_train, X_test, y_train, y_test = dataset
+    #X_train_ = np.copy(X_train)
+    #y_train_ = np.copy(y_train)
+    #X_test_ = np.copy(X_test)
+    #y_test_ = np.copy(y_test)
+
+    n_estimators = 300
     model = GradientBoostingClassifier(
-        n_estimators=n_estimators, 
-        max_depth=1, 
+        n_estimators=n_estimators,
+        max_depth=1,
         min_samples_split=20,
         subsample=0.5,
-        learning_rate=0.1,
+        learning_rate=0.2,
         #max_features=0.8,
         min_samples_leaf=10)
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train.reshape(-1))
     prediction = model.staged_predict_proba(X_test)
-    y = loss(y_test, prediction)
-
+    y = loss(y_test.reshape(-1), prediction)
     board = DashBoard()
     board.init_graph(name="my_one", title="my_one", line_type="default", c="r", y=y.reshape(-1))
-    
+   
     model = SklearnGradientBoostingClassifier(
         n_estimators=n_estimators,
-        max_depth=2,
+        max_depth=1,
         criterion="mse",
         min_samples_split=20,
         min_samples_leaf=10,
@@ -89,8 +95,9 @@ def test_real_data(dataset):
     prediction = np.empty([n_estimators, X_test.shape[0]])
     for i, proba in enumerate(model.staged_predict_proba(X_test)):
         prediction[i] = proba[:, 1]
-    y = loss(y_test, prediction)
+    print(y_test.shape, prediction.shape)
+    # assert 0
+    y = loss(y_test.reshape(-1), prediction)
 
     board.init_graph(name="baseline", title="sklearn", line_type="baseline", c="g", y=y.reshape(-1))
     board.make_plot()
-
