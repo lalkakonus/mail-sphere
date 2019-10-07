@@ -74,15 +74,19 @@ class DataLoader():
     
     def raw_content(self, start=0, stop=-1, step=1):
         for raw_filepath  in self._raw_content_list[start: stop: step]:
-            with open(raw_filepath, "r") as raw_file:
-                url = raw_file.readline()[:-1]
-                url_id = self.urls[url]
-                html_data = raw_file.read()
-                yield {
-                    "url": url,
-                    "url_id": url_id,
-                    "html_data": html_data}
-    
+            try:
+                with open(raw_filepath, "r") as raw_file:
+                    url = raw_file.readline()[:-1]
+                    url_id = self.urls[url]
+                    html_data = raw_file.read()
+                    yield {
+                        "url": url,
+                        "url_id": url_id,
+                        "html_data": html_data}
+            except Exception as error:
+                logger.error("Error occured during raw content parsing file: {}. {}".format(raw_filepath, error), exc_info=True)
+                continue
+
     @property
     def raw_content_len(self):
         return len(self._raw_content_list)
@@ -91,6 +95,16 @@ class DataLoader():
         for filepath in self._processed_content_list[start: stop: step]:
             yield Serializer.load(filepath)
     
+    def get_processed_file(self, doc_id):
+        filepath = self._settings["directory"]["processed_content"] + "/" + str(doc_id) + ".data"
+        assert os.path.isfile(filepath)
+        return Serializer.load(filepath)
+
+    @property
+    def avgdl(self):
+        return 1800
+        # return self._avgdl
+
     @property
     def processed_content_len(self):
         return len(self._processed_content_list)

@@ -16,4 +16,4 @@ class Processor():
 
 if __name__ == '__main__': 
     dataprocessor = Processor()
-    dataprocessor.run(process_raw_data=True, create_idf=False)
+    dataprocessor.run(process_raw_data=False, create_idf=True)

@@ -1,5 +1,6 @@
-19-10-03 01:27:06 - include.dataprocessor - INFO - Process #0; pid 15192 started
-19-10-03 01:27:06 - include.dataprocessor - INFO - Process #1; pid 15193 started
-19-10-03 01:27:41 - include.dataprocessor - INFO - All data processed
-19-10-03 01:27:41 - include.dataprocessor - INFO - Process (pid - 15192) joined
-19-10-03 01:27:41 - include.dataprocessor - INFO - Process (pid - 15193) joined
+19-10-08 00:59:42 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
+19-10-08 00:59:42 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-08 00:59:44 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
+19-10-08 00:59:44 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-08 00:59:46 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
+19-10-08 00:59:46 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168

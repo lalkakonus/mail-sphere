@@ -12,7 +12,14 @@ def test_dataloader_0():
 
 
 def test_dataloader_1():
+    return
     dataloader = DataLoader()
     for data in dataloader.processed_content(10):
         print(data)
         break
+
+def test_dataloader_2():
+    dataloader = DataLoader()
+    print(dataloader.queries[1000])
+    data = dataloader.get_processed_file(46624)
+    print(data)

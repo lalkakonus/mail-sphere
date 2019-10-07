@@ -1,30 +1,48 @@
 # coding: utf-8
 import pymorphy2
+from nltk.corpus import stopwords
+from pymystem3 import Mystem
+import pymorphy2
+import json
+from string import punctuation
+from . import PROCESSING_CONFIG_FILEPATH
 # from cachetools import cached, LRUCache
 
+
 class Tokenizer():
-    # MORPH = pymorphy2.MorphAnalyzer()
-    # cache = LRUCache(maxsize=10000)
     
-    def easy_tokenizer(self, text):
+    def __init__(self):
+        with open(PROCESSING_CONFIG_FILEPATH, "r") as config_file:
+            self._settings = json.load(config_file)
+        self.stopwords = []
+        self.mystem = Mystem()
+        self.pymorph = pymorphy2.MorphAnalyzer()
+        self.lemmatizer = lambda word: word
+
+        if self._settings["stop_words"]["remove"]:
+            self.stopwords = stopwords.words("russian")
+        if self._settings["stemming"]["activate"]:
+            if self._settings["stemming"]["stemmer"] == "mystem":
+                self.lemmatizer = lambda text: [self.mystem.lemmatize(word)[0] for word in text]
+            if self._settings["stemming"]["stemmer"] == "pymorhy":
+                self.lemmatizer = lambda text: [self.pymorph.parse(word)[0].normal_form for word in text]
+    
+    def tokenizer(self, text):
+        text = str(text).lower()
+        result = []
         word = ''
         for symbol in text:
             if symbol.isalnum():
                 word += symbol
             elif word:
-                yield word
+                if word not in self.stopwords:
+                    result.append(word)
                 word = ''
-        if len(word):
-            yield word
+        if word and word not in self.stopwords:
+            result.append(word)
+        return result
 
-
-    # @cached(cache)
     def __call__(self, text):
-        # global PYMORPHY_CACHE
-        text = str(text)
-        if not len(text):
+        if not text:
             return []
-        return list(word for word in self.easy_tokenizer(text.lower()))
-        # TODO decide weather to save word in norma form or not   
-        # word = MORPH.parse(word)[0].normal_form
-        #yield word
+        return self.lemmatizer(self.tokenizer(text))
