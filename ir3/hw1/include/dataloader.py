@@ -102,8 +102,15 @@ class DataLoader():
 
     @property
     def avgdl(self):
-        return 1800
-        # return self._avgdl
+        '''
+        sum_length = 0
+        for doc in self.processed_content():
+            body = doc["body"]
+            title = doc["<title>"][0] if doc["<title>"] else []
+            sum_length += len(body) + len(title)
+        return sum_length / self.processed_content_len
+        '''
+        return 1844
 
     @property
     def processed_content_len(self):

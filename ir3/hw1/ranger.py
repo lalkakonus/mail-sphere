@@ -4,7 +4,7 @@ from include.logger import get_logger
 from progressbar import progressbar
 import math
 import json
-PROCESSING_CONFIG_FILEPATH = "config/processing.config"
+PROCESSING_CONFIG_FILEPATH = "config/processing.json"
 logger = get_logger(__name__)
 
 class Ranger:
@@ -19,12 +19,21 @@ class Ranger:
     def predict(self):
         logger.info("Prediction started.")
         bar = progressbar(range(len(self._dataloader.queries)))
+        nulls = 0
+        not_nulls = 0
+        all_ = 0
         for query_id, doc_ids in self._dataloader.submission.items():
-            ranged_list = [[self._score(query_id, doc_id), doc_id] for doc_id in doc_ids]
+            ranged_list = [[self._score(query_id, doc_id, len(doc_ids)), doc_id] for doc_id in doc_ids]
             ranged_list.sort(key=lambda x: x[0], reverse=True)
+            
+            all_ += len(ranged_list)
+            nulls += sum([1 - bool(x[0]) for x in ranged_list])
+            not_nulls += sum([bool(x[0]) for x in ranged_list])
+            
             ranged_list = [x[1] for x in ranged_list]
             self._result[query_id] = ranged_list
             bar.__next__()
+        print(nulls, not_nulls, all_)
         logger.info("Prediction finished.")
         return self
 

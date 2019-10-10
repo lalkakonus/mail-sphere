@@ -1,6 +1,16 @@
-19-10-08 00:59:42 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
-19-10-08 00:59:42 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
-19-10-08 00:59:44 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
-19-10-08 00:59:44 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
-19-10-08 00:59:46 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /home/sergey/.local/lib/python3.6/site-packages/pymorphy2_dicts/data
-19-10-08 00:59:46 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:13 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:14 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:16 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:16 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:18 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:18 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:22 - include.idf - INFO - IDF have been loaded.
+19-10-11 01:54:23 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:23 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:25 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:25 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:27 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:28 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:32 - include.idf - INFO - IDF have been loaded.
+19-10-11 01:54:32 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
+19-10-11 01:54:32 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168

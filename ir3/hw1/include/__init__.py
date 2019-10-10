@@ -1,3 +1,3 @@
-PROCESSING_CONFIG_FILEPATH = "config/processing.config"
+PROCESSING_CONFIG_FILEPATH = "config/processing.json"
 LOGGING_CONFIG_FILEPATH = "config/logging.config"
-MODEL_CONFIG_FILEPATH = "config/model.config"
+MODEL_CONFIG_FILEPATH = "config/model.json"

@@ -21,13 +21,13 @@ class RawDataProcessor():
         self._dataloader = DataLoader()
         self._idf = None
         self.tokenizer = Tokenizer()
-        self.workers_number = 4 
+        self.workers_number = 8 
         self.serializer = Serializer()
         with open(PROCESSING_CONFIG_FILEPATH, "r") as config_file:
             self._settings = json.load(config_file)
         # ATTENTION !!!
-        for filename in os.scandir(self._settings["directory"]["processed_content"]):
-            os.remove(os.path.join(filename))
+        # for filename in os.scandir(self._settings["directory"]["processed_content"]):
+        #     os.remove(os.path.join(filename))
 
     def find_tag_text(self, bs, tags):
         bs_tags = bs.find_all(tags)
@@ -75,7 +75,7 @@ class RawDataProcessor():
                 try:
                     data = self.mangling(**raw_data)
                     filename = "{}.data".format(data["url_id"])
-                    self.serializer.save(data, os.path.join(self._settings["directory"]["processed_content"], filename))
+                    # self.serializer.save(data, os.path.join(self._settings["directory"]["processed_content"], filename))
                     queue.put(1)
                 except Exception as error:
                     logger.error('Error in thread {} occured: {}'.format(os.getpid(), error), exc_info=True)

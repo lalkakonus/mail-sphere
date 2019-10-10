@@ -4,7 +4,8 @@
         "urls" : "data/urls.numerate.txt", 
         "sample_submission" : "data/sample_submission.txt", 
         "submission" : "data/submission.txt",
-        "idf" : "data/idf.pack"
+        "idf" : "data/idf.pack",
+        "statistic": "data/statistic.pack"
     },
     "directory": {
         "raw_content" : "data/raw",
@@ -24,7 +25,7 @@
     },
     "bs" : {
         "parser_type" : "html5lib",
-        "valid_parser_type" : "html5lib, html.parser"
+        "valid_parser_type" : ["html5lib", "html.parser", "lxml"]
     },
     "boilerpipe" : {
         "activate" : false,

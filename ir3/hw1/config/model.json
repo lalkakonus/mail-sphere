@@ -1,0 +1,77 @@
+{
+    "active_model": {
+        "single": "bm25accurate"
+    },
+    "parametrs": {
+        "pair": {
+            "weight": 0
+        },
+        "all_words": {
+            "weight": 0
+        },
+        "single": {
+            "weight": 1,
+            "model": {
+                "tf_idf": {
+                    "active": {
+                        "tf_type": "log_ave",
+                        "df_type": "prob_idf",
+                        "normalization": "byte_size"
+                    },
+                    "valid": {
+                        "tf_type" : ["natural", "logarithm", "augmented", "log_ave"],
+                        "df_type": ["idf", "prob_idf"],
+                        "normaliztion": ["none", "cosine", "byte_size"]
+                    }
+                },
+                "bm25yandex": {
+                    "active": {
+                        "k_1": 1,
+                        "k_2": 350
+                    }
+                },
+                "bm25accurate": {
+                    "active": {
+                        "k_1": 1.5,
+                        "k_3": 1.5,
+                        "b": 0.75,
+                        "avgdl": 1844
+                    }
+                },
+                "bm25sample": {
+                    "active": {
+                        "k_1": 2,
+                        "b": 0.75,
+                        "avgdl": 1844
+                    }
+                }
+            },
+            "zones_weight": {
+                "title" : {
+                    "tags": ["<title>"],
+                    "weight" : 3
+                },
+                "bold" : {
+                    "tags" : ["<b>;<strong>", "<mark>"],
+                    "weight" : 0
+                },
+                "down_line" : {
+                    "tags": ["<u>", "<ins>"],
+                    "weight" : 0
+                },
+                "cursive" : {
+                    "tags": ["<i>;<em>"],
+                    "weight" : 0
+                },
+                "links" : {
+                    "tags": ["<a>"],
+                    "weight" : 0
+                },
+                "body" : { 
+                    "tags" : ["body"],
+                    "weight" : 1
+                }
+            }
+        }
+    }
+}

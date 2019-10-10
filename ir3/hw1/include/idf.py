@@ -24,10 +24,6 @@ class IDF():
         self.filepath = self._settings["filepath"]["idf"]
         self._mode = "idf_smoth"
 
-    def chmode(self, mode):
-        self._mode = mode
-        return self
-
     def load(self):
         self._data = self.data_type(*self.serializer.load(self.filepath))
         logger.info("IDF have been loaded.")
@@ -52,19 +48,38 @@ class IDF():
         logger.info("IDF creating finished")
         self.save()
         return self
-    
-    def __getitem__(self, key):
-        eps = 1e-4
+
+    def df(self, key):
+        return self._data.df.get(key, 0)
+ 
+    def idf(self, key):
         N = self._data.doc_count
         df = self._data.df.get(key, 0)
+        if df:
+            return math.log(N / df)
+        return 0
+
+    def prob_idf(self, key):
+        N = self._data.doc_count
+        df = self._data.df.get(key, 0)
+        if df:
+            return max(0, math.log((N / df) - 1))
+        return 0
+
+    def bm25yandex(self, key):
+        N = self._data.doc_count
         cf = self._data.cf.get(key, 0)
-        if self._mode == "idf_smoth":
-            return math.log(N / (eps + df))
-        if self._mode == "bm25":
-            return math.log((N - df + 0.5) / (df + 0.5))
-        if self._mode == "bm25f":
+        if cf:
             return math.log(1 - math.exp(-1.5 * cf / N))
-            
+        return 0
+
+    def smoth_idf(self, key):
+        N = self._data.doc_count
+        df = self._data.df.get(key, 0)
+        if df:
+            return max(math.log((N - df + 0.5) / (df + 0.5)), 0)
+        return 0
+    
     @property
     def doc_count(self):
         return self.dataloader.processed_count_len
