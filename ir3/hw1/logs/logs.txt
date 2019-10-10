@@ -14,3 +14,5 @@
 19-10-11 01:54:32 - include.idf - INFO - IDF have been loaded.
 19-10-11 01:54:32 - pymorphy2.opencorpora_dict.wrapper - INFO - Loading dictionaries from /usr/local/lib/python3.7/site-packages/pymorphy2_dicts/data
 19-10-11 01:54:32 - pymorphy2.opencorpora_dict.wrapper - INFO - format: 2.4, revision: 393442, updated: 2015-01-17T16:03:56.586168
+19-10-11 01:54:37 - include.idf - INFO - IDF have been loaded.
+19-10-11 01:54:37 - __main__ - INFO - Prediction started.
