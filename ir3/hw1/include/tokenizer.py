@@ -1,8 +1,7 @@
 # coding: utf-8
-import pymorphy2
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 from pymystem3 import Mystem
-import pymorphy2
+# import pymorphy2
 import json
 from string import punctuation
 from . import PROCESSING_CONFIG_FILEPATH
@@ -16,16 +15,18 @@ class Tokenizer():
             self._settings = json.load(config_file)
         self.stopwords = []
         self.mystem = Mystem()
-        self.pymorph = pymorphy2.MorphAnalyzer()
+        # self.pymorph = pymorphy2.MorphAnalyzer()
         self.lemmatizer = lambda word: word
 
         if self._settings["stop_words"]["remove"]:
-            self.stopwords = stopwords.words("russian")
+            pass
+            # self.stopwords = stopwords.words("russian")
         if self._settings["stemming"]["activate"]:
             if self._settings["stemming"]["stemmer"] == "mystem":
                 self.lemmatizer = lambda text: [self.mystem.lemmatize(word)[0] for word in text]
             if self._settings["stemming"]["stemmer"] == "pymorhy":
-                self.lemmatizer = lambda text: [self.pymorph.parse(word)[0].normal_form for word in text]
+                pass
+                # self.lemmatizer = lambda text: [self.pymorph.parse(word)[0].normal_form for word in text]
     
     def tokenizer(self, text):
         text = str(text).lower()

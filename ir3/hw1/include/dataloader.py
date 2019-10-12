@@ -97,7 +97,7 @@ class DataLoader():
     
     def get_processed_file(self, doc_id):
         filepath = self._settings["directory"]["processed_content"] + "/" + str(doc_id) + ".data"
-        assert os.path.isfile(filepath)
+        assert os.path.isfile(filepath), "file {} absent".format(filepath)
         return Serializer.load(filepath)
 
     @property

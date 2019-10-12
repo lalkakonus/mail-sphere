@@ -20,8 +20,8 @@ def test_dataloader_1():
 
 def test_dataloader_2():
     dataloader = DataLoader()
-    print(dataloader.avgdl)
-    return
+    # print(dataloader.avgdl)
+    # return
     # print(dataloader.queries[1000])
     data = dataloader.get_processed_file(10093)
     print(data)

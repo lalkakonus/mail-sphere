@@ -17,18 +17,37 @@ class Statistic:
     
     def create(self):
         logger.info("Statistic calculation started.")
-        bar = progressbar(range(len(self._dataloader.queries)))
-        for query_id, doc_ids in self._dataloader.submission.items():
-            query = set(self._dataloader.queries[query_id])
-            self._data[query_id] = dict.fromkeys(query, 0)
-            for doc_id in doc_ids:
-                doc = self._dataloader.get_processed_file(doc_id)
-                body = set(doc["body"])
-                title = set(doc["<title>"][0]) if doc["<title>"] else set()
-                doc_words = body | title
-                keys = query & doc_words
-                for key in keys:
-                    self._data[query_id][key] += 1
+        
+        # dict: query_id -> query_text 
+        queries = self._dataloader.queries
+        # set: words_in_queries
+        all_words = set(sum(queries.values(), []))
+        
+        # dict: url_id -> query_id
+        url_to_query = dict()
+        for query_id, url_ids in  self._dataloader.submission.items():
+            url_to_query.update({url_id: query_id for url_id in url_ids})
+            # set default values to _data
+            self._data[query_id] = {word: [0 ,0] for word in queries[query_id]}
+
+        logger.info("Preprocessing finished.")
+
+        bar = progressbar(range(self._dataloader.processed_content_len))
+        for doc_id in range(1, self._dataloader.processed_content_len + 1):
+            doc = self._dataloader.get_processed_file(doc_id)
+            query_id = url_to_query[doc_id]
+            
+            doc_words = set(doc["body"]) | (set(doc["<title>"][0]) if doc["<title>"] else set())
+            intersection = all_words & doc_words
+            
+            for _query_id, query_statistic in  self._data.items():
+                pos = 1
+                if query_id == _query_id:
+                    pos = 0
+                for word, value in query_statistic.items():
+                    if word in intersection:
+                        value[pos] += 1
+            
             bar.__next__()
         logger.info("Statistic calculation finished.")
         return self

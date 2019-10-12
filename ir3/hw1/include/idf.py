@@ -79,6 +79,14 @@ class IDF():
         if df:
             return max(math.log((N - df + 0.5) / (df + 0.5)), 0)
         return 0
+
+    def icf(self, key):
+        TotalLemms = 1844 * 74000
+        cf = self._data.cf.get(key, 0)
+        if cf:
+            return math.log(TotalLemms / cf)
+        return 0
+
     
     @property
     def doc_count(self):

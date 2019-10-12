@@ -4,10 +4,10 @@
     },
     "parametrs": {
         "pair": {
-            "weight": 0
+            "weight": 1
         },
         "all_words": {
-            "weight": 0
+            "weight": 1
         },
         "single": {
             "weight": 1,
@@ -53,15 +53,15 @@
                 },
                 "bold" : {
                     "tags" : ["<b>;<strong>", "<mark>"],
-                    "weight" : 0
+                    "weight" : 0.7
                 },
                 "down_line" : {
                     "tags": ["<u>", "<ins>"],
-                    "weight" : 0
+                    "weight" : 0.5
                 },
                 "cursive" : {
                     "tags": ["<i>;<em>"],
-                    "weight" : 0
+                    "weight" : 0.3
                 },
                 "links" : {
                     "tags": ["<a>"],

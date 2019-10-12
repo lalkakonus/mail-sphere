@@ -3,7 +3,7 @@ from .dataloader import DataLoader
 from .logger import get_logger
 from .idf import IDF
 from .query_statistic import Statistic
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 import json
 import math
 from collections import Counter
@@ -37,7 +37,7 @@ class Score:
         pair_score = self.pair_model_weight * self.pair_model(query, doc)
         all_words_score = self.all_words_model_weight * self.all_words_model(query, doc)
 
-        print(single_score, pair_score, all_words_score)
+        # print(single_score, pair_score, all_words_score)
         return single_score + pair_score + all_words_score
 
 class SingleModel:
@@ -193,16 +193,20 @@ class bm25accurate(SingleModel):
                 if term in text:
                     term_weight += zone_weight 
                 
-            VRt = self.statistic(query_id)(term)
-            VNRt = VR - VRt
+            VRt, VNRt = self.statistic(query_id)[term]
             df = self.df(term)
-            tf = doc[term] * term_weight
+            tf = doc_counter.get(term, 0) * term_weight
+            # tf = doc_counter.get(term, 0)
 
-            A = ((VRt + 0.5) / (VNRt + 0.5)) / ((df - VRt + 0.5) * (N - df - VR + VRt + 0.5))
+
+            A = ((VRt + 0.5) / (VNRt + 0.5)) / ((df - VRt + 0.5) / (N - df - VR + VRt + 0.5))
             B = tf * (k_1 + 1) / (tf + k_1 * (1 - b + b * doc_len / avgdl))
             C = (k_3 + 1) * tf / (k_3 + tf)
+            #if A < 1:
+            #    print("term:", term, "VRt: ", VRt, ";VNRt: ", VNRt, ";df: ", df, ";N: ", N,";VR: ", VR)
 
-            score += math.log(A) * B * C 
+            if A * B * C > 1:
+                score += math.log(A * B * C)
         return score
 
 class Pair:
@@ -244,7 +248,7 @@ class AllWords:
     def __call__(self, query, doc):
         title = doc["<title>"][0] if doc["<title>"] else []
         body = doc["body"][0]
-        score = 0
-        if not (set(query) - set(body + title)):
-            score = 0.2 * sum([self.df(word) for word in query])
+        words = set(query) - set(body + title)
+        score = 0.2 * sum([self.df(word) for word in query])
+        score *= 0.03 ** len(words)
         return score
