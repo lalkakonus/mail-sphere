@@ -3,6 +3,7 @@ from .serializer import Serializer
 import sys
 import os
 import json
+from nltk.corpus import stopwords
 from .tokenizer import Tokenizer
 from . import PROCESSING_CONFIG_FILEPATH
 from .logger import get_logger
@@ -12,6 +13,12 @@ logger = get_logger(__name__)
 class DataLoader():
 
     def __init__(self):
+        self.stopwords = stopwords.words("russian")
+        self.stopwords += [
+            "купить", "2019", "год", "класс", "скачать", "отзыв",
+            "работа", "москва", "песня", "сайт", "онлайн", "цена",
+            "смотреть", "бесплатно", "русский", "игра"]
+        
         with open(PROCESSING_CONFIG_FILEPATH, "r") as config_file:
             self._settings = json.load(config_file)
         
@@ -23,7 +30,7 @@ class DataLoader():
         processed_content_dir = self._settings["directory"]["processed_content"]
         self._processed_content_list = list(os.scandir(processed_content_dir))
 
-        # Process queries data
+        # Process queries datac
         tokenizer = Tokenizer()
         queries_filepath = self._settings["filepath"]["queries"]
         with open(queries_filepath, 'r') as queries_file:
@@ -98,19 +105,24 @@ class DataLoader():
     def get_processed_file(self, doc_id):
         filepath = self._settings["directory"]["processed_content"] + "/" + str(doc_id) + ".data"
         assert os.path.isfile(filepath), "file {} absent".format(filepath)
-        return Serializer.load(filepath)
+        doc = Serializer.load(filepath)
+        doc["body"] = [x for x in doc["body"] if x not in self.stopwords]
+        if doc["<title>"]:
+            doc["<title>"] = [[x for x in doc["<title>"][0] if x not in self.stopwords]]
+        return doc
+
 
     @property
     def avgdl(self):
-        '''
         sum_length = 0
         for doc in self.processed_content():
-            body = doc["body"]
+            body = [word for word in doc["body"] if word not in self.stopwords]
             title = doc["<title>"][0] if doc["<title>"] else []
+            title = [word for word in title if word not in self.stopwords]
+
             sum_length += len(body) + len(title)
         return sum_length / self.processed_content_len
-        '''
-        return 1844
+        # return 1844
 
     @property
     def processed_content_len(self):
