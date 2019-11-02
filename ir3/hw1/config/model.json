@@ -33,9 +33,9 @@
                 "bm25accurate": {
                     "active": {
                         "k_1": 1.5,
-                        "k_3": 1.5,
+                        "k_3": 200,
                         "b": 0.75,
-                        "avgdl": 1844
+                        "avgdl": 1488
                     }
                 },
                 "bm25sample": {
