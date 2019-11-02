@@ -3,7 +3,7 @@ from .dataloader import DataLoader
 from .logger import get_logger
 from .idf import IDF
 from .query_statistic import Statistic
-# from nltk.corpus import stopwords
+from nltk.corpus import stopwords
 import json
 import math
 from collections import Counter
@@ -17,6 +17,12 @@ class Score:
             self._settings = json.load(config_file)
         with open(MODEL_CONFIG_FILEPATH, "r") as config_file:
             self._settings.update(json.load(config_file))
+        self.stopwords = stopwords.words("russian")
+        self.stopwords += [
+            "купить", "2019", "год", "класс", "скачать", "отзыв",
+            "работа", "москва", "песня", "сайт", "онлайн", "цена",
+            "смотреть", "бесплатно", "русский", "игра"]
+
         self._dataloader = DataLoader()
         single_model_type = eval(self._settings["active_model"]["single"])
         single_model_args = self._settings["parametrs"]["single"]["model"][self._settings["active_model"]["single"]]["active"]
@@ -30,9 +36,11 @@ class Score:
         self.all_words_model = AllWords()
 
     def __call__(self, query_id, doc_id, relevant_doc_cnt):
-        query = self._dataloader.queries[query_id]
+        query = [word for word in self._dataloader.queries[query_id] if word not in self.stopwords]
+
         doc = self._dataloader.get_processed_file(doc_id)
-        doc["body"] = [doc["body"]]
+        # doc["body"] = [[word for word in doc["body"] if word not in self.stopwords]]
+
         single_score = self.single_model_weight * self.single_model(query, doc, relevant_doc_cnt, query_id)
         pair_score = self.pair_model_weight * self.pair_model(query, doc)
         all_words_score = self.all_words_model_weight * self.all_words_model(query, doc)
